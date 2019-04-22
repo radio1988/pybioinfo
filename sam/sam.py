@@ -1,6 +1,14 @@
 import pysam
 from Bio.Seq import Seq
 
+def mapping_direction(read):
+    if read.flag & 4:
+        return "."
+    elif read.flag & 16:
+        return "-"
+    else:
+        return "+"
+
 def contain_A(read, n=2):
     '''test if contain A in fastq read found in bam line
     :return: true/false
@@ -74,3 +82,11 @@ def mapped_length(read):
     stats = read.get_cigar_stats()
     mapped_length = stats[0][0]  # M, matches
     return mapped_length
+
+
+def three_prime_mapped_location(read):
+    direction = mapping_direction(read)
+    if direction == "+":
+        return read.reference_end - 1
+    elif direction == "-":
+        return read.reference_start

@@ -27,10 +27,9 @@ parser.add_argument('--out',
                     help="fname for output bam file, default: out.bam")
 args = parser.parse_args()
 
+
 # Read And Filter
 samfile = pysam.AlignmentFile(args.bam, "rb")
-
-
 
 with pysam.AlignmentFile(args.out, "wb", header=samfile.header) as outf:
     for i, read in enumerate(samfile):
