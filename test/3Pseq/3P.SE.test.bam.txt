@@ -1,0 +1,33 @@
+# downloaded from GSE37453
+
+GSM919962	3P_Seq_24hpf
+GSM919963	3P_Seq_72hpf
+GSM919964	3P_Seq_Adult
+GSM919965	3P_Seq_PreMZT
+GSM919966	3P_Seq_PreMZT_2
+GSM919967	3P_Seq_PreMZT_3
+GSM919968	3P_Seq_PostMZT
+GSM919969	3P_Seq_Brain
+GSM919970	3P_Seq_Ovary
+GSM919971	3P_Seq_Testis
+GSM919972	3P_Seq_1cell
+GSM919973	3P_Seq_4hpf
+
+# aligned with gsnap (without fastq trimming)
+gsnap=/project/umw_mccb/Rui/tools/gmap-2018-05-30/bin/gsnap
+$gsnap \
+-D /project/umw_nathan_lawson/Rui/zb_genome/ucsc_GRCz11/primary/ \
+-d gsnap_idx -s refseq_mRNA.iit \
+-m 0.05 -N 1 -n 1 \
+-t 10 -B 5 \
+--gunzip  -A sam \
+--failed-input=./gsnap/unmapped/${name}.unmapped.fq \
+$R1 | samtools view -Sb -@ 2 -m 1G -1 - > ./gsnap/$name.bam
+
+# merged all with samtools merge
+samtools merge -@ 4  3P.SE.bam *bam
+
+# subsampled into this test set (270k reads, 10MB in size)
+samtools view -s 0.001 -b 3P.SE.bam > 3P.SE.test.bam
+
+
